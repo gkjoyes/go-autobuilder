@@ -3,10 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"syscall"
 )
 
@@ -45,7 +47,12 @@ func init() {
 
 func main() {
 	parseFlag()
-	gracefulShutdown()
+	go gracefulShutdown()
+
+	// Set env variables, If env path was provided.
+	if env != "" {
+		setEnv(env)
+	}
 }
 
 // Read command line arguments.
@@ -91,6 +98,24 @@ func gracefulShutdown() {
 	for sig := range signalChan {
 		if sig == syscall.SIGINT {
 			os.Exit(0)
+		}
+	}
+}
+
+// setEnv setup configuration variables from given env file.
+func setEnv(path string) {
+	data, err := ioutil.ReadFile(path)
+	if err != nil {
+		log.Fatalf("An error occurred while reading env file: %v\n", err)
+	}
+
+	lines := strings.Split(string(data), "\n")
+	for _, line := range lines {
+		if strings.Contains(line, "=") {
+			params := strings.Split(line, "=")
+			if len(params) == 2 {
+				os.Setenv(strings.TrimSpace(params[0]), strings.TrimSpace(params[1]))
+			}
 		}
 	}
 }
