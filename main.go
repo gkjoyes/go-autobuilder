@@ -10,21 +10,23 @@ import (
 	"path/filepath"
 	"strings"
 	"syscall"
+
+	"github.com/george-kj/go-autobuilder/watcher"
 )
 
 // App version.
 const v = "1.0.0"
 
 var (
-	path, name, env             string
+	appPath, appName, env       string
 	version, buildOnly          bool
 	customCmd, runCmd, buildCmd string
 )
 
 // Read command line arguments initially.
 func init() {
-	flag.StringVar(&path, "p", "", "")
-	flag.StringVar(&name, "n", "", "")
+	flag.StringVar(&appPath, "p", "", "")
+	flag.StringVar(&appName, "n", "", "")
 	flag.StringVar(&env, "e", "", "")
 	flag.BoolVar(&version, "v", false, "")
 	flag.BoolVar(&buildOnly, "b", false, "")
@@ -67,28 +69,64 @@ func parseFlag() {
 
 	// Set default configuration values if not provided.
 	setDefaults()
+
+	// Create new watcher object.
+	w := watcher.New(
+		appPath,
+		appName,
+		buildOnly,
+		prepareCommands(customCmd),
+		prepareCommands(buildCmd),
+		prepareCommands(runCmd),
+	)
+
+	_ = w
 }
 
 // setDefaults set default values to configuration variables if not provided.
 func setDefaults() {
-	if path == "" {
+	if appPath == "" {
 		dir, err := os.Getwd()
 		if err != nil {
 			log.Fatalf("An error occurred while getting the current working directory: %v\n", err)
 		}
-		path, err = filepath.Abs(dir)
+		appPath, err = filepath.Abs(dir)
 		if err != nil {
 			log.Fatalf("An error occurred while finding an absolute working path: %v\n", err)
 		}
 	} else {
-		dir, err := os.Stat(path)
+		dir, err := os.Stat(appPath)
 		if err != nil {
-			log.Fatalf("Given path is not valid one: %s\n", path)
+			log.Fatalf("Given path is not valid one: %s\n", appPath)
 		}
 		if !dir.IsDir() {
-			log.Fatalf("Given path is not valid: %s: The path must be a directory\n", path)
+			log.Fatalf("Given path is not valid: %s: The path must be a directory\n", appPath)
 		}
 	}
+
+	if appName == "" {
+		appName = filepath.Base(appPath)
+	}
+}
+
+// prepareCommands split commands and remove unwanted space between these.
+func prepareCommands(c string) []string {
+
+	var (
+		cmd   = strings.Split(strings.TrimSpace(c), " ")
+		final = make([]string, 0, len(cmd))
+		keys  = make(map[string]bool, 0)
+	)
+
+	// Eliminate duplicate commands and empty spaces.
+	for _, v := range cmd {
+		if got := keys[v]; !got && v != "" {
+			keys[v] = true
+			final = append(final, v)
+		}
+	}
+
+	return final
 }
 
 // gracefulShutdown shutdown system cleanly if any interrupts happen.
