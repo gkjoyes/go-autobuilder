@@ -1,6 +1,13 @@
 package builder
 
-import "time"
+import (
+	"fmt"
+	"os/exec"
+	"strings"
+	"time"
+
+	"github.com/george-kj/go-autobuilder/logger"
+)
 
 // Builder struct.
 // app		: Application name.
@@ -21,4 +28,40 @@ func New(appName, appPath string, commands []string) *Builder {
 		dir:      appPath,
 		commands: commands,
 	}
+}
+
+// GetLastBuild returns last build time.
+func (b *Builder) GetLastBuild() time.Time {
+	return b.lastBuild
+}
+
+// SetLastBuild update lastest build time.
+func (b *Builder) SetLastBuild(time time.Time) {
+	b.lastBuild = time
+}
+
+// Build take build of our application.
+func (b *Builder) Build() bool {
+
+	// Create build commands with arguments.
+	commands := []string{"go", "build", "-o", b.app}
+
+	if len(b.commands) != 0 {
+		commands = append(commands, b.commands...)
+	}
+	logger.Info().Command("Build", "b").Message(logger.FormattedMsg(strings.Join(commands, " "))).Log()
+
+	// Execute build commands.
+	cmd := exec.Command(commands[0], commands[1:]...)
+	cmd.Dir = b.dir
+	out, err := cmd.CombinedOutput()
+
+	// Update last build time.
+	b.SetLastBuild(time.Now())
+
+	if err != nil {
+		logger.Error().Command("Build", "b").Message(fmt.Sprintf("Failed: %v: %v\n", err.Error(), out)).Log()
+		return false
+	}
+	return true
 }
