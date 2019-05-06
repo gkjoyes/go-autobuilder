@@ -62,7 +62,7 @@ func (r *Runner) Custom() error {
 	if len(r.customCommands) == 1 {
 		cmd = exec.Command(r.customCommands[0])
 	} else {
-		exec.Command(r.customCommands[0], r.customCommands[1:]...)
+		cmd = exec.Command(r.customCommands[0], r.customCommands[1:]...)
 	}
 
 	// Execute commands.

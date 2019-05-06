@@ -4,13 +4,13 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/signal"
 	"path/filepath"
 	"strings"
 	"syscall"
 
+	"github.com/george-kj/go-autobuilder/logger"
 	"github.com/george-kj/go-autobuilder/watcher"
 )
 
@@ -18,9 +18,8 @@ import (
 const v = "1.0.0"
 
 var (
-	appPath, appName, env       string
-	version, buildOnly          bool
-	customCmd, runCmd, buildCmd string
+	appPath, appName, env, customCmd, runCmd, buildCmd string
+	version, buildOnly                                 bool
 )
 
 // Read command line arguments initially.
@@ -88,19 +87,23 @@ func setDefaults() {
 	if appPath == "" {
 		dir, err := os.Getwd()
 		if err != nil {
-			log.Fatalf("An error occurred while getting the current working directory: %v\n", err)
+			logger.Error().Message(fmt.Sprintf("An error occurred while getting the current working directory: %v\n", err)).Log()
+			os.Exit(0)
 		}
 		appPath, err = filepath.Abs(dir)
 		if err != nil {
-			log.Fatalf("An error occurred while finding an absolute working path: %v\n", err)
+			logger.Error().Message(fmt.Sprintf("An error occurred while finding an absolute working path: %v\n", err)).Log()
+			os.Exit(0)
 		}
 	} else {
 		dir, err := os.Stat(appPath)
 		if err != nil {
-			log.Fatalf("Given path is not valid one: %s\n", appPath)
+			logger.Error().Message(fmt.Sprintf("Given path is not valid one: %s\n", appPath)).Log()
+			os.Exit(0)
 		}
 		if !dir.IsDir() {
-			log.Fatalf("Given path is not valid: %s: The path must be a directory\n", appPath)
+			logger.Error().Message(fmt.Sprintf("Given path is not valid: %s: The path must be a directory\n", appPath)).Log()
+			os.Exit(0)
 		}
 	}
 
@@ -112,11 +115,9 @@ func setDefaults() {
 // prepareCommands split commands and remove unwanted space between these.
 func prepareCommands(c string) []string {
 
-	var (
-		cmd   = strings.Split(strings.TrimSpace(c), " ")
-		final = make([]string, 0, len(cmd))
-		keys  = make(map[string]bool, 0)
-	)
+	cmd := strings.Split(strings.TrimSpace(c), " ")
+	final := make([]string, 0, len(cmd))
+	keys := make(map[string]bool, 0)
 
 	// Eliminate duplicate commands and empty spaces.
 	for _, v := range cmd {
@@ -125,7 +126,6 @@ func prepareCommands(c string) []string {
 			final = append(final, v)
 		}
 	}
-
 	return final
 }
 
@@ -135,6 +135,7 @@ func gracefulShutdown() {
 	signal.Notify(signalChan, os.Interrupt)
 	for sig := range signalChan {
 		if sig == syscall.SIGINT {
+			logger.Warn().Command("Interrupt", "i").Message("Exiting...").Log()
 			os.Exit(0)
 		}
 	}
@@ -144,7 +145,8 @@ func gracefulShutdown() {
 func setEnv(path string) {
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
-		log.Fatalf("An error occurred while reading env file: %v\n", err)
+		logger.Warn().Message(fmt.Sprintf("An error occurred while reading env file: %v\n", err)).Log()
+		return
 	}
 
 	lines := strings.Split(string(data), "\n")
