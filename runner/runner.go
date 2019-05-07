@@ -26,7 +26,7 @@ type Runner struct {
 // New create and return new runner object.
 func New(appName, appPath string, rc, cc []string) *Runner {
 	return &Runner{
-		process:        filepath.Join(appName, appPath),
+		process:        filepath.Join(appPath, appName),
 		commands:       rc,
 		customCommands: cc,
 	}
@@ -40,13 +40,12 @@ func (r *Runner) Run() error {
 	if err != nil {
 		return err
 	}
-
-	logger.Info().Command("Running", "r").Message(logger.FormattedMsg(strings.Join(r.commands, " "))).Log()
+	logger.Info().Command("Running", "r").Message(logger.FormattedMsg(filepath.Base(r.process) + " " + strings.Join(r.commands, " "))).Log()
 
 	// Run app.
 	r.cmd = exec.Command(r.process, r.commands...)
 	r.cmd.Stderr = os.Stderr
-	r.cmd.Stdin = os.Stdin
+	r.cmd.Stdout = os.Stdout
 	return r.cmd.Start()
 }
 
@@ -55,7 +54,6 @@ func (r *Runner) Custom() error {
 	if len(r.customCommands) == 0 {
 		return nil
 	}
-
 	logger.Info().Command("Running", "r").Message(logger.FormattedMsg(strings.Join(r.customCommands, " "))).Log()
 
 	var cmd *exec.Cmd

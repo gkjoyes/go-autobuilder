@@ -54,6 +54,22 @@ func main() {
 	if env != "" {
 		setEnv(env)
 	}
+
+	// Create new watcher object.
+	w := watcher.New(
+		appPath,
+		appName,
+		buildOnly,
+		prepareCommands(customCmd),
+		prepareCommands(buildCmd),
+		prepareCommands(runCmd),
+	)
+
+	// Watching given path for changes.
+	if err := w.Watch(); err != nil {
+		logger.Error().Message(err.Error()).Log()
+		os.Exit(1)
+	}
 }
 
 // Read command line arguments.
@@ -68,18 +84,6 @@ func parseFlag() {
 
 	// Set default configuration values if not provided.
 	setDefaults()
-
-	// Create new watcher object.
-	w := watcher.New(
-		appPath,
-		appName,
-		buildOnly,
-		prepareCommands(customCmd),
-		prepareCommands(buildCmd),
-		prepareCommands(runCmd),
-	)
-
-	_ = w
 }
 
 // setDefaults set default values to configuration variables if not provided.
@@ -88,22 +92,22 @@ func setDefaults() {
 		dir, err := os.Getwd()
 		if err != nil {
 			logger.Error().Message(fmt.Sprintf("An error occurred while getting the current working directory: %v\n", err)).Log()
-			os.Exit(0)
+			os.Exit(1)
 		}
 		appPath, err = filepath.Abs(dir)
 		if err != nil {
 			logger.Error().Message(fmt.Sprintf("An error occurred while finding an absolute working path: %v\n", err)).Log()
-			os.Exit(0)
+			os.Exit(1)
 		}
 	} else {
 		dir, err := os.Stat(appPath)
 		if err != nil {
 			logger.Error().Message(fmt.Sprintf("Given path is not valid one: %s\n", appPath)).Log()
-			os.Exit(0)
+			os.Exit(1)
 		}
 		if !dir.IsDir() {
 			logger.Error().Message(fmt.Sprintf("Given path is not valid: %s: The path must be a directory\n", appPath)).Log()
-			os.Exit(0)
+			os.Exit(1)
 		}
 	}
 
