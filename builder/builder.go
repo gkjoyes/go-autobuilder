@@ -49,7 +49,7 @@ func (b *Builder) Build() bool {
 	if len(b.commands) != 0 {
 		commands = append(commands, b.commands...)
 	}
-	logger.Info().Command("Build", "b").Message(logger.FormattedMsg(strings.Join(commands, " "))).Log()
+	logger.Info().Command("Build", "B").Message(logger.FormattedMsg(strings.Join(commands, " "))).Log()
 
 	// Execute build commands.
 	cmd := exec.Command(commands[0], commands[1:]...)
@@ -60,7 +60,7 @@ func (b *Builder) Build() bool {
 	b.SetLastBuild(time.Now())
 
 	if err != nil {
-		logger.Error().Command("Build", "b").Message(fmt.Sprintf("Failed: %v: %v\n", err.Error(), out)).Log()
+		logger.Error().Command("Build", "B").Message(fmt.Sprintf("Failed: %v: %v\n", err.Error(), string(out))).Log()
 		return false
 	}
 	return true

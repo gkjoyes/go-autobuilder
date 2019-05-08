@@ -37,7 +37,7 @@ func New(appPath, appName string, buildOnly bool, cc, bc, rc []string) *Watcher 
 // An initial build and run were performed before watching begins.
 // Return error if any.
 func (w *Watcher) Watch() error {
-	logger.Info().Command("Watching", "w").Message(logger.FormattedMsg(w.dir)).Log()
+	logger.Info().Command("Watching", "W").Message(logger.FormattedMsg(w.dir)).Log()
 
 	// Do first build and run.
 	w.doBuildRun()
@@ -85,7 +85,7 @@ func (w *Watcher) watchFunc(path string, info os.FileInfo, err error) error {
 			if err != nil {
 				return err
 			}
-			logger.Info().Command("Modified", "m").Message(logger.FormattedMsg(p)).Log()
+			logger.Info().Command("Modified", "M").Message(logger.FormattedMsg(p)).Log()
 
 			w.doBuildRun()
 		}

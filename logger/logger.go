@@ -10,24 +10,24 @@ import (
 const project = "go-autobuilder"
 
 // Bash color macros for logging messages.
+const reset = "\033[0m"
 const (
-	err   = "\033[38;5;196m"
-	info  = "\033[38;5;266m"
-	warn  = "\033[38;5;214m"
-	flag  = "\033[38;5;8m"
-	name  = "\033[38;5;157m"
-	msg   = "\033[38;5;243m"
-	reset = "\033[0m"
+	err  = "\033[38;5;196m"
+	info = "\033[38;5;266m"
+	warn = "\033[38;5;214m"
+	flag = "\033[38;5;8m"
+	name = "\033[38;5;157m"
+	msg  = "\033[38;5;243m"
 )
 
 // Bash color macros for command types.
 const (
 	modify    = "\033[38;5;10m"
-	build     = "\033[38;5;7m"
-	run       = "\033[38;5;7m"
+	build     = "\033[38;5;3m"
+	run       = "\033[38;5;6m"
 	watch     = "\033[38;5;7m"
 	export    = "\033[38;5;7m"
-	interrupt = "\033[38;5;7m"
+	interrupt = "\033[2;31m"
 )
 
 // Log struct.
@@ -63,17 +63,17 @@ func (l *Log) Message(msg ...string) *Log {
 // Command set cmd for logging.
 func (l *Log) Command(cmd, code string) *Log {
 	switch code {
-	case "m":
+	case "M":
 		l.cmd = join(modify, code, reset, " ")
-	case "b":
+	case "B":
 		l.cmd = join(build, code, reset, " ")
-	case "r":
+	case "R":
 		l.cmd = join(run, code, reset, " ")
-	case "i":
+	case "I":
 		l.cmd = join(interrupt, code, reset, " ")
-	case "w":
+	case "W":
 		l.cmd = join(watch, code, reset, " ")
-	case "e":
+	case "E":
 		l.cmd = join(export, code, reset, " ")
 	}
 	return l

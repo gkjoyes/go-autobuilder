@@ -40,7 +40,7 @@ func (r *Runner) Run() error {
 	if err != nil {
 		return err
 	}
-	logger.Info().Command("Running", "r").Message(logger.FormattedMsg(filepath.Base(r.process) + " " + strings.Join(r.commands, " "))).Log()
+	logger.Info().Command("Running", "R").Message(logger.FormattedMsg(filepath.Base(r.process) + " " + strings.Join(r.commands, " "))).Log()
 
 	// Run app.
 	r.cmd = exec.Command(r.process, r.commands...)
@@ -54,7 +54,7 @@ func (r *Runner) Custom() error {
 	if len(r.customCommands) == 0 {
 		return nil
 	}
-	logger.Info().Command("Running", "r").Message(logger.FormattedMsg(strings.Join(r.customCommands, " "))).Log()
+	logger.Info().Command("Running", "R").Message(logger.FormattedMsg(strings.Join(r.customCommands, " "))).Log()
 
 	var cmd *exec.Cmd
 	if len(r.customCommands) == 1 {
@@ -66,7 +66,7 @@ func (r *Runner) Custom() error {
 	// Execute commands.
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		logger.Error().Command("Running", "r").Message(fmt.Sprintf("Failed: %v: %v\n", err.Error(), out)).Log()
+		logger.Error().Command("Running", "R").Message(fmt.Sprintf("Failed: %v: %v\n", err.Error(), out)).Log()
 		return err
 	}
 	return nil

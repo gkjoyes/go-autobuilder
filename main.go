@@ -139,7 +139,7 @@ func gracefulShutdown() {
 	signal.Notify(signalChan, os.Interrupt)
 	for sig := range signalChan {
 		if sig == syscall.SIGINT {
-			logger.Warn().Command("Interrupt", "i").Message("Exiting...").Log()
+			logger.Warn().Command("Interrupt", "I").Message("Exiting...").Log()
 			os.Exit(0)
 		}
 	}
