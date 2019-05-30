@@ -60,7 +60,7 @@ func (b *Builder) Build() bool {
 	b.SetLastBuild(time.Now())
 
 	if err != nil {
-		logger.Error().Command("Build", "B").Message(fmt.Sprintf("Failed: %v: %v\n", err.Error(), string(out))).Log()
+		logger.Error().Command("Build", "B").Message(fmt.Sprintf("%v: %v\n", err.Error(), string(out))).Log()
 		return false
 	}
 	return true

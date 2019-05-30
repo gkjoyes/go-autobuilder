@@ -66,7 +66,7 @@ func (r *Runner) Custom() error {
 	// Execute commands.
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		logger.Error().Command("Running", "R").Message(fmt.Sprintf("Failed: %v: %v\n", err.Error(), out)).Log()
+		logger.Error().Command("Running", "R").Message(fmt.Sprintf("%v: %v\n", err.Error(), out)).Log()
 		return err
 	}
 	return nil
