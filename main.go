@@ -26,12 +26,12 @@ var (
 func init() {
 	flag.StringVar(&appPath, "p", "", "")
 	flag.StringVar(&appName, "n", "", "")
-	flag.StringVar(&env, "e", "", "")
-	flag.BoolVar(&version, "v", false, "")
-	flag.BoolVar(&buildOnly, "b", false, "")
 	flag.StringVar(&customCmd, "cc", "", "")
 	flag.StringVar(&buildCmd, "bc", "", "")
 	flag.StringVar(&runCmd, "rc", "", "")
+	flag.StringVar(&env, "e", "", "")
+	flag.BoolVar(&version, "v", false, "")
+	flag.BoolVar(&buildOnly, "b", false, "")
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage: go-autobuilder\n")
 		fmt.Fprintf(os.Stderr, "options:\n")
@@ -47,8 +47,8 @@ func init() {
 }
 
 func main() {
-	parseFlag()
 	go gracefulShutdown()
+	parseFlag()
 
 	// Set env variables, If env path was provided.
 	if env != "" {
@@ -156,7 +156,7 @@ func setEnv(path string) {
 	lines := strings.Split(string(data), "\n")
 	for _, line := range lines {
 		if strings.Contains(line, "=") {
-			params := strings.Split(line, "=")
+			params := strings.SplitN(line, "=", 2)
 			if len(params) == 2 {
 				os.Setenv(strings.TrimSpace(params[0]), strings.TrimSpace(params[1]))
 			}
