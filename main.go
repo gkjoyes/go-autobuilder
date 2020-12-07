@@ -10,8 +10,8 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/george-kj/go-autobuilder/logger"
-	"github.com/george-kj/go-autobuilder/watcher"
+	"github.com/gkjoyes/go-autobuilder/logger"
+	"github.com/gkjoyes/go-autobuilder/watcher"
 )
 
 // App version.

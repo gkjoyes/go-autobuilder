@@ -1,10 +1,11 @@
 # go-autobuilder
+
 Build go projects automatically when files get modified.
 
 ## Install
 
 ```sh
-    go get -u github.com/george-kj/go-autobuilder
+    go get -u github.com/gkjoyes/go-autobuilder
 ```
 
 ## Features
@@ -30,12 +31,12 @@ Build go projects automatically when files get modified.
     ```sh
     Usage: go-autobuilder
     options:
-        -p 	    The directory to be watch.
-        -n	    Project name.
-        -e	    Environment file path.
-        -v	    Prints the version.
-        -b	    Build only mode.
-        -cc	    Custom commands to run before the build.
-        -bc	    Custom commands to run while building.
-        -rc	    Custom commands to run while running.
+        -p      The directory to be watch.
+        -n      Project name.
+        -e      Environment file path.
+        -v      Prints the version.
+        -b      Build only mode.
+        -cc     Custom commands to run before the build.
+        -bc     Custom commands to run while building.
+        -rc     Custom commands to run while running.
     ```

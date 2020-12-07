@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/george-kj/go-autobuilder/logger"
+	"github.com/gkjoyes/go-autobuilder/logger"
 )
 
 // Builder struct.

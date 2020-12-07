@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/george-kj/go-autobuilder/builder"
-	"github.com/george-kj/go-autobuilder/logger"
-	"github.com/george-kj/go-autobuilder/runner"
+	"github.com/gkjoyes/go-autobuilder/builder"
+	"github.com/gkjoyes/go-autobuilder/logger"
+	"github.com/gkjoyes/go-autobuilder/runner"
 )
 
 // Watcher struct.
